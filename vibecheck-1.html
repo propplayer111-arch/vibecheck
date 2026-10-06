@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="VibeCheck — find your vibe.">
+<title>VibeCheck ✦</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#09090f;color:#fff;min-height:100vh;display:grid;place-items:center;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:-30%;background:radial-gradient(circle at 20% 20%,#7c3aed55,transparent 30%),radial-gradient(circle at 80% 70%,#06b6d455,transparent 30%);filter:blur(40px);z-index:-1}
+.card{width:min(92%,620px);padding:34px;border:1px solid #ffffff18;background:#ffffff0d;backdrop-filter:blur(20px);border-radius:28px;box-shadow:0 25px 80px #0008}
+h1{font-size:clamp(42px,10vw,76px);line-height:.9;margin:0 0 12px;letter-spacing:-4px}h1 span{color:#a78bfa}.sub{color:#b8b7c7;margin-bottom:28px}
+label{display:block;margin:18px 0 8px;color:#ddd;font-weight:600}input,select{width:100%;padding:15px;border-radius:14px;border:1px solid #ffffff18;background:#10101a;color:white;font-size:16px;outline:none}button{width:100%;margin-top:24px;padding:16px;border:0;border-radius:15px;background:linear-gradient(90deg,#8b5cf6,#06b6d4);color:white;font-weight:800;font-size:16px;cursor:pointer;transition:.2s}button:hover{transform:translateY(-2px);filter:brightness(1.1)}
+#result{display:none;text-align:center}.emoji{font-size:70px}.result{font-size:42px;font-weight:900;margin:8px 0}.desc{color:#c9c8d4;line-height:1.6}.tag{display:inline-block;margin:5px;padding:7px 11px;border-radius:99px;background:#ffffff12;color:#ddd}.again{background:#ffffff12}
+small{display:block;text-align:center;color:#777;margin-top:18px}
+</style>
+</head>
+<body>
+<main class="card">
+<section id="quiz">
+<h1>Vibe<span>Check</span> ✦</h1>
+<p class="sub">3 questions. 1 suspiciously accurate vibe.</p>
+<label>Your name</label>
+<input id="name" placeholder="Type anything..." maxlength="30">
+<label>It's Friday night. You...</label>
+<select id="q1"><option value="social">go out / call the squad</option><option value="chill">stay home and chill</option><option value="chaos">make a completely random plan</option></select>
+<label>Your camera roll is mostly...</label>
+<select id="q2"><option value="aesthetic">random aesthetic stuff</option><option value="people">people & memories</option><option value="chaos">screenshots & absolute nonsense</option></select>
+<label>Pick your energy</label>
+<select id="q3"><option value="main">main character</option><option value="low">lowkey observer</option><option value="wild">chaotic neutral</option></select>
+<button onclick="check()">REVEAL MY VIBE →</button>
+<small>No account. No tracking. Just vibes.</small>
+</section>
+
+<section id="result">
+<div class="emoji" id="emoji"></div>
+<div class="result" id="title"></div>
+<p class="desc" id="desc"></p>
+<div id="tags"></div>
+<button onclick="copyResult()">COPY MY RESULT</button>
+<button class="again" onclick="location.reload()">DO IT AGAIN</button>
+</section>
+</main>
+
+<script>
+function check(){
+ const n=document.getElementById('name').value.trim()||'Mystery Person';
+ const a=[q1.value,q2.value,q3.value];
+ const counts={social:0,chill:0,chaos:0,aesthetic:0,people:0,main:0,low:0,wild:0};
+ a.forEach(x=>counts[x]++);
+ let type;
+ if(counts.chaos+counts.wild>=2) type='chaos';
+ else if(counts.main+counts.social+counts.people>=2) type='main';
+ else type='chill';
+ const data={
+ chaos:['🌀','CHAOTIC ICON','You somehow turn normal situations into stories worth telling. Your plans are questionable, your timing is worse, and somehow it works.',['unpredictable','fun','zero context']],
+ main:['⚡','MAIN CHARACTER','You have the kind of energy that makes ordinary moments feel like scenes from a movie. Confidence: loading…',['bold','social','plot armor']],
+ chill:['🌙','LOWKEY LEGEND','You don’t need to be the loudest person in the room. You observe, pick your moments, and quietly have your own thing going on.',['calm','observant','mysterious']]
+ }[type];
+ document.getElementById('quiz').style.display='none';
+ document.getElementById('result').style.display='block';
+ document.getElementById('emoji').textContent=data[0];
+ document.getElementById('title').textContent=data[1];
+ document.getElementById('desc').textContent=n+', '+data[2];
+ document.getElementById('tags').innerHTML=data[3].map(x=>`<span class="tag">#${x}</span>`).join('');
+ window.shareText=`${n}'s VibeCheck result: ${data[1]} ${data[0]}`;
+}
+async function copyResult(){
+ try{await navigator.clipboard.writeText(window.shareText);alert('Copied! Send it to someone 👀')}
+ catch(e){alert(window.shareText)}
+}
+</script>
+</body>
+</html>
